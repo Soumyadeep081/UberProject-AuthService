@@ -1,0 +1,5 @@
+ALTER TABLE Passenger
+    ADD phone_number VARCHAR(255) NOT NULL UNIQUE ,
+    ADD email VARCHAR(255) NOT NULL UNIQUE ,
+    ADD password VARCHAR(255) NOT NULL ,
+    MODIFY name VARCHAR(255) NOT NULL ;
