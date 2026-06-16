@@ -33,7 +33,8 @@ public class JwtService implements CommandLineRunner {
                 .claims(payload)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(expiryDate)
-                .subject(email).signWith(getSignKey())
+                .subject(email)
+                .signWith(getSignKey())
                 .compact();
     }
 
