@@ -26,7 +26,7 @@ public class JwtService implements CommandLineRunner {
     private String SECRET;
 
     //This method creates a brand-new JWT token for us based on the payload
-    private String createToken(Map<String, Object> payload, String email){ //This is because it expects a payload which is in JSON format, and it can be represented as key:value pair
+    public String createToken(Map<String, Object> payload, String email){ //This is because it expects a payload which is in JSON format, and it can be represented as key:value pair
         Date now=new Date();
         Date expiryDate = new Date(now.getTime() + expiry*1000L);
         return Jwts.builder()
@@ -38,7 +38,11 @@ public class JwtService implements CommandLineRunner {
                 .compact();
     }
 
-    private Claims extractAllPayloads(String token){
+    public String createToken(String email){
+        return  createToken(new HashMap<>(),email);
+    }
+
+    public Claims extractAllPayloads(String token){
         return Jwts
                 .parser()
                 .setSigningKey(getSignKey())
@@ -52,11 +56,11 @@ public class JwtService implements CommandLineRunner {
         return claimsResolver.apply(claims);
     }
 
-    private  Date extractExpiration(String token){
+    public   Date extractExpiration(String token){
         return extractClaim(token, Claims::getExpiration);
     }
 
-    private String extractEmail(String token){
+    public String extractEmail(String token){
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -65,11 +69,11 @@ public class JwtService implements CommandLineRunner {
      * @param token JWT token
      * @return true if token is expired else false
      */
-    private Boolean isTokenExpired(String token){
+    public Boolean isTokenExpired(String token){
         return extractExpiration(token).before(new Date());
     }
 
-    private Key getSignKey(){
+    public Key getSignKey(){
        return Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
     }
 
