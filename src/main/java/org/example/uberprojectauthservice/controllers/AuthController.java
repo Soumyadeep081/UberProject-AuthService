@@ -1,6 +1,8 @@
 package org.example.uberprojectauthservice.controllers;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.uberprojectauthservice.dtos.AuthRequestDto;
 import org.example.uberprojectauthservice.dtos.AuthResponseDto;
@@ -45,7 +47,7 @@ public class AuthController {
     }
 
     @PostMapping("/signin/passenger")
-    public ResponseEntity<?> signIn(@RequestBody AuthRequestDto authRequestDto, HttpServletResponse response){
+    public ResponseEntity<?> signIn(@RequestBody AuthRequestDto authRequestDto, HttpServletRequest request, HttpServletResponse response){
         System.out.println("Request received " + authRequestDto.getEmail() + " " + authRequestDto.getPassword());
         Authentication authentication=authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequestDto.getEmail(), authRequestDto.getPassword()));
 
@@ -55,7 +57,7 @@ public class AuthController {
                             .httpOnly(true)
                             .secure(false)
                             .path("/")
-                            .maxAge(cookieExpiry)
+                            .maxAge(7*24*3600)
                             .build();
             response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
@@ -64,6 +66,13 @@ public class AuthController {
         else{
             throw new UsernameNotFoundException("user not found");
         }
+    }
 
+    @GetMapping("/validate")
+    public ResponseEntity<?> validate(HttpServletRequest request){
+        for(Cookie cookie : request.getCookies()){
+            System.out.println(cookie.getName() +" "+ cookie.getValue());
+        }
+        return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 }
